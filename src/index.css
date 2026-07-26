@@ -1,0 +1,365 @@
+/* ==========================================================================
+   REWATI RAMAN SINGH — CRT TRANSMISSION PORTFOLIO DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+  /* CRT Color Palette */
+  --color-crt-bg: #07080a;
+  --color-crt-screen: #0c0e12;
+  --color-phosphor-white: #e3e6e1;
+  --color-phosphor-glow: rgba(227, 230, 225, 0.85);
+  --color-signal-grey: #8a918b;
+  --color-signal-dark: #3a3f3c;
+  --color-warning-red: #ff2a2a;
+  --color-warning-glow: rgba(255, 42, 42, 0.4);
+  --color-crt-bezel: #111317;
+  --color-crt-bezel-shadow: #040507;
+
+  /* Typography */
+  --font-display: 'Syne', 'Space Grotesk', -apple-system, sans-serif;
+  --font-subdisplay: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing & Sizes */
+  --crt-bezel-padding: 24px;
+  --crt-border-radius: 28px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --crt-bezel-padding: 8px;
+    --crt-border-radius: 14px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-crt-bg);
+  color: var(--color-phosphor-white);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Custom Scrollbar for CRT look */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 12, 16, 0.9);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-signal-dark);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-signal-grey);
+}
+
+/* Selection Styling */
+::selection {
+  background: var(--color-warning-red);
+  color: #ffffff;
+}
+
+/* Base Link Styling */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* CRT Outer Television Enclosure */
+.crt-television-frame {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-crt-screen);
+  padding: 0 24px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .crt-television-frame {
+    padding: 0 12px;
+  }
+}
+
+.crt-bezel-inner {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Concave Glass Depth Shading around inner screen edges */
+.crt-bezel-inner::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 880;
+  background: 
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.62) 100%);
+}
+
+/* Statically Pinned Pure Black TV Frame Overlay */
+.crt-tv-frame-overlay-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 900;
+}
+
+/* CRT Glass Haze & Frame Edge Layer */
+.crt-glass-haze-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 890;
+  box-shadow: 
+    inset 0 0 40px 15px rgba(0, 0, 0, 0.9),
+    inset 0 0 80px 30px rgba(0, 0, 0, 0.6);
+  background: 
+    radial-gradient(ellipse at center, rgba(255,255,255,0.01) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+/* CRT Scanlines Overlay */
+.crt-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 98;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.28) 50%,
+    rgba(0, 0, 0, 0.28)
+  );
+  background-size: 100% 4px;
+  opacity: 0.65;
+}
+
+/* RGB Phosphor Grid Texture Overlay */
+.crt-rgb-texture {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 97;
+  opacity: 0.04;
+  background: linear-gradient(90deg, rgba(255,0,0,0.5), rgba(0,255,0,0.5), rgba(0,0,255,0.5));
+  background-size: 3px 100%;
+}
+
+/* Magnetic CRT Canvas Overlay */
+.crt-canvas-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 885;
+}
+
+/* Text & Display Helpers */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 0.9;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-phosphor {
+  color: var(--color-phosphor-white);
+  text-shadow: 0 0 8px rgba(227, 230, 225, 0.25);
+}
+
+.text-grey {
+  color: var(--color-signal-grey);
+}
+
+.text-red {
+  color: var(--color-warning-red);
+}
+
+/* Dynamic Interference Glitch Class */
+.crt-interference-glitch {
+  animation: crtGlitchShift 0.3s ease-in-out infinite alternate;
+  filter: drop-shadow(2px 0 0 rgba(255,0,0,0.7)) drop-shadow(-2px 0 0 rgba(0,255,255,0.7));
+}
+
+@keyframes crtGlitchShift {
+  0% { transform: translate(0, 0) skew(0deg); }
+  20% { transform: translate(-3px, 1px) skew(-0.5deg); }
+  40% { transform: translate(2px, -2px) skew(0.5deg); }
+  60% { transform: translate(-1px, 2px) skew(0deg); }
+  80% { transform: translate(3px, 0) skew(0.8deg); }
+  100% { transform: translate(0, 0) skew(0deg); }
+}
+
+/* Boot Sequence Keyframe Animations */
+.boot-line-expand {
+  animation: bootLine 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.boot-screen-flash {
+  animation: bootFlash 0.3s ease-out forwards;
+}
+
+@keyframes bootLine {
+  0% {
+    width: 0%;
+    height: 2px;
+    opacity: 1;
+  }
+  50% {
+    width: 100%;
+    height: 2px;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes bootFlash {
+  0% { background: #ffffff; opacity: 1; }
+  100% { background: transparent; opacity: 0; }
+}
+
+/* Shutdown Animation */
+.shutdown-collapsing {
+  animation: shutdownCollapse 1.2s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes shutdownCollapse {
+  0% {
+    transform: scale(1, 1);
+    filter: brightness(1);
+  }
+  40% {
+    transform: scale(1, 0.005);
+    filter: brightness(2.5);
+  }
+  70% {
+    transform: scale(0.005, 0.005);
+    filter: brightness(4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0, 0);
+    filter: brightness(0);
+    opacity: 0;
+  }
+}
+
+/* Responsive Mobile Polish */
+@media (max-width: 768px) {
+  .crt-television-frame {
+    padding: 0 6px;
+  }
+  
+  .crt-tv-frame-overlay-container {
+    opacity: 0.4;
+  }
+
+  .antenna-graphic-container {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    margin-top: 2rem;
+    justify-content: flex-start !important;
+    opacity: 0.5 !important;
+  }
+
+  h1, h2, h3 {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 520px) {
+  .crt-television-frame {
+    padding: 0 4px;
+  }
+
+  .hero-tagline-block {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Media Query Adjustments */
+@media (prefers-reduced-motion: reduce) {
+  .crt-interference-glitch,
+  .shutdown-collapsing,
+  .boot-line-expand {
+    animation: none !important;
+    transition: none !important;
+  }
+}
