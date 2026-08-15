@@ -1,32 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+    <!-- Dark CRT Enclosure Gradient -->
+    <radialGradient id="bezelGrad" cx="50%" cy="50%" r="75%">
       <stop offset="0%" stop-color="#14171d"/>
-      <stop offset="100%" stop-color="#07080a"/>
+      <stop offset="70%" stop-color="#090a0d"/>
+      <stop offset="100%" stop-color="#040507"/>
     </radialGradient>
-    <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="60%" stop-color="#e3e6e1"/>
-      <stop offset="100%" stop-color="#b0b5ad"/>
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
+
+    <!-- CRT Screen Phosphor Gradient -->
+    <radialGradient id="screenGrad" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#1c2420"/>
+      <stop offset="60%" stop-color="#0c120e"/>
+      <stop offset="100%" stop-color="#060907"/>
+    </radialGradient>
+
+    <!-- Phosphor Glow Effect -->
+    <filter id="phosphorGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+
+    <!-- Scanline Pattern -->
+    <pattern id="scanlines" width="100" height="8" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="4" x2="100" y2="4" stroke="rgba(0, 0, 0, 0.35)" stroke-width="2"/>
+    </pattern>
   </defs>
 
-  <!-- Dark CRT Rounded Container -->
-  <rect x="16" y="16" width="480" height="480" rx="100" fill="url(#bgGrad)" stroke="rgba(255, 255, 255, 0.15)" stroke-width="8"/>
-  
-  <!-- Subtle CRT Phosphor Accent Ring -->
-  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="rgba(255, 42, 42, 0.35)" stroke-width="3"/>
+  <!-- Outer CRT Enclosure Bezel -->
+  <rect x="16" y="16" width="480" height="480" rx="90" fill="url(#bezelGrad)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="6"/>
 
-  <!-- Elegant Letter 'R' Vector -->
-  <path d="M 156 112 H 264 C 336 112 376 144 376 202 C 376 250 344 280 292 292 L 384 396 H 312 L 232 296 H 216 V 396 H 156 V 112 Z M 216 160 V 248 H 258 C 294 248 316 234 316 204 C 316 174 294 160 258 160 H 216 Z" fill="url(#rGrad)" filter="url(#glow)"/>
+  <!-- Inner CRT Curved Glass Screen -->
+  <rect x="48" y="48" width="416" height="390" rx="50" fill="url(#screenGrad)" stroke="rgba(0, 255, 102, 0.25)" stroke-width="4"/>
 
-  <!-- Red CRT Phosphor Indicator Dot -->
-  <circle cx="380" cy="132" r="16" fill="#ff2a2a"/>
+  <!-- Scanline Overlay -->
+  <rect x="48" y="48" width="416" height="390" rx="50" fill="url(#scanlines)"/>
+
+  <!-- CRT Screen Glare Reflection -->
+  <path d="M 60 70 Q 256 120 452 70 Q 430 180 60 70 Z" fill="rgba(255, 255, 255, 0.04)"/>
+
+  <!-- Glowing Initial 'R' in Phosphor Green & White -->
+  <path d="M 176 140 H 280 C 344 140 376 168 376 218 C 376 260 348 286 304 296 L 380 380 H 316 L 248 298 H 228 V 380 H 176 V 140 Z M 228 184 V 256 H 272 C 304 256 324 244 324 220 C 324 196 304 184 272 184 H 228 Z" 
+        fill="#e3e6e1" 
+        filter="url(#phosphorGlow)"/>
+
+  <!-- Red CRT Power/Signal LED -->
+  <circle cx="410" cy="458" r="10" fill="#ff2a2a" filter="url(#phosphorGlow)"/>
+  <!-- Green Power Sync LED -->
+  <circle cx="380" cy="458" r="8" fill="#00ff66"/>
 </svg>

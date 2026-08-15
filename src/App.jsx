@@ -17,12 +17,33 @@ export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [interference, setInterference] = useState(0);
   const [isShutdown, setIsShutdown] = useState(false);
+  const [isFlickering, setIsFlickering] = useState(false);
 
   // Console Easter Egg
   useEffect(() => {
     console.log('%c signal acquired.', 'color: #00ff66; font-size: 14px; font-weight: bold;');
     console.log('%c welcome, curious person.', 'color: #8a918b; font-size: 12px;');
   }, []);
+
+  // Trigger single subtle experimental flicker once
+  const triggerExperimentalFlicker = () => {
+    if (isFlickering) return;
+    setIsFlickering(true);
+    crtAudio.playSubtleFlickerSound();
+    setTimeout(() => {
+      setIsFlickering(false);
+    }, 240);
+  };
+
+  // Auto-trigger single subtle flicker once after boot sequence completes
+  useEffect(() => {
+    if (!isBooting) {
+      const timer = setTimeout(() => {
+        triggerExperimentalFlicker();
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isBooting]);
 
   // Intersection Observer for scroll reveal animations
   useEffect(() => {
@@ -110,13 +131,13 @@ export default function App() {
       {isShutdown && <ShutdownScreen onReboot={handleReboot} />}
 
       {/* Real-time CRT Canvas Shader & Magnetic Cursor Layer (Viewport Pinned) */}
-      <CRTCanvas interferenceLevel={interference} />
+      <CRTCanvas interferenceLevel={interference} isFlickering={isFlickering} />
 
       {/* Statically Pinned Bulged Pure Black TV Frame & Glowing Glass Overlay */}
       <TVFrameOverlay />
 
       {/* Outer Bezels & CRT Enclosure Inner Screen */}
-      <div className="crt-bezel-inner">
+      <div className={`crt-bezel-inner ${isFlickering ? 'crt-experimental-flicker-active' : ''}`}>
         {/* Scanlines Overlay */}
         <div className="crt-scanlines" />
 
@@ -127,7 +148,7 @@ export default function App() {
         <div className="crt-glass-overlay" />
 
         {/* CRT Top Header Navbar */}
-        <Navbar onReboot={handleReboot} />
+        <Navbar onReboot={handleReboot} onTriggerFlicker={triggerExperimentalFlicker} />
 
         {/* Main Content Stream */}
         <main style={{ flex: 1, position: 'relative', zIndex: 10 }}>

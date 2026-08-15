@@ -119,6 +119,39 @@ class CRTAudioEngine {
     osc.start(now);
     osc.stop(now + 0.8);
   }
+
+  playSubtleFlickerSound() {
+    if (this.isMuted) return;
+    this.init();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+
+    // Faint cathode electron pop (25ms subtle crackle)
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.035);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+    }
+
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1400, now);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.025, now);
+    gain.gain.exponentialRampToValueAtTime(0.0005, now + 0.035);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.035);
+  }
 }
 
 export const crtAudio = new CRTAudioEngine();

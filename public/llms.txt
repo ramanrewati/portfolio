@@ -1,0 +1,16 @@
+# Rewati Raman Singh
+
+> chasing greatness
+
+Personal engineering portfolio of Rewati Raman Singh. AI systems, edge intelligence, real-time vision, and agent memory architectures.
+
+## Core Expertise & Projects
+- Preschool AI Surveillance: End-to-end AI surveillance system turning ordinary camera feeds into real-time understanding of crowded preschool environments. Features visual detection, tracking, identity, activity understanding, and asynchronous inference.
+- Zero Egress Indic Translation: Offline enterprise translation system for Indic languages where sensitive data never leaves the edge device.
+- Agent Memory Architectures: Persistent context and memory systems for AI healthcare agents with strict zero-leak PII redaction and compliance.
+
+## Links & Contacts
+- Website: https://ramanrewati.github.io
+- GitHub: https://github.com/ramanrewati
+- LinkedIn: https://www.linkedin.com/in/rewati-raman-singh-377025259/
+

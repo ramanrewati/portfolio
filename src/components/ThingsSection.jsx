@@ -15,14 +15,14 @@ export default function ThingsSection() {
       }}
     >
       {/* Section Header */}
-      <div style={{ marginBottom: '4rem' }}>
+      <div style={{ marginBottom: 'var(--space-xl, 2.618rem)' }}>
         <div
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            fontSize: 'var(--font-size-xs, 12px)',
             color: 'var(--color-warning-red)',
             letterSpacing: '0.1em',
-            marginBottom: '0.5rem',
+            marginBottom: 'var(--space-xs, 0.382rem)',
           }}
         >
           THINGS
@@ -30,7 +30,7 @@ export default function ThingsSection() {
         <h2
           className="font-display text-phosphor"
           style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+            fontSize: 'var(--font-size-h2, clamp(2.2rem, 4.236vw, 4.236rem))',
             fontWeight: 800,
             textTransform: 'uppercase',
             margin: 0,

@@ -20,6 +20,23 @@
   --font-subdisplay: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Golden Ratio (1.618) Typographic Scale & Spacing System */
+  --font-size-xs: clamp(0.618rem, 0.75vw, 0.75rem);   /* ~10-12px */
+  --font-size-sm: clamp(0.75rem, 0.9vw, 0.875rem);    /* ~12-14px */
+  --font-size-base: clamp(0.95rem, 1.1vw, 1rem);      /* 15-16px */
+  --font-size-h4: clamp(1.25rem, 1.618vw, 1.618rem);  /* ~20-26px */
+  --font-size-h3: clamp(1.618rem, 2.618vw, 2.618rem); /* ~26-42px */
+  --font-size-h2: clamp(2.2rem, 4.236vw, 4.236rem);   /* ~35-68px */
+  --font-size-h1: clamp(2.5rem, min(9vw, 12.5vh), 6.854rem); /* ~40-110px */
+
+  --space-xs: 0.382rem;  /* ~6px */
+  --space-sm: 0.618rem;  /* ~10px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.618rem;  /* ~26px */
+  --space-xl: 2.618rem;  /* ~42px */
+  --space-2xl: 4.236rem; /* ~68px */
+  --space-3xl: 6.854rem; /* ~110px */
+
   /* Spacing & Sizes */
   --crt-bezel-padding: 24px;
   --crt-border-radius: 28px;
@@ -36,10 +53,12 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 html, body {
@@ -53,7 +72,13 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-overflow-scrolling: touch;
 }
+
+a, button, [role="button"] {
+  touch-action: manipulation;
+}
+
 
 /* Scroll Reveal Animations */
 .reveal-on-scroll {
@@ -256,6 +281,40 @@ button {
   100% { transform: translate(0, 0) skew(0deg); }
 }
 
+/* Experimental Subtle CRT Screen Flicker (Single 220ms Cathode Sync Pulse) */
+.crt-experimental-flicker-active {
+  animation: crtExperimentalFlickerOnce 0.22s cubic-bezier(0.25, 1, 0.5, 1) 1 forwards;
+  will-change: filter, opacity, transform;
+}
+
+@keyframes crtExperimentalFlickerOnce {
+  0% {
+    filter: brightness(1) contrast(1);
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    filter: brightness(1.06) contrast(1.03) drop-shadow(0.5px 0 0 rgba(255, 42, 42, 0.2));
+    opacity: 0.96;
+    transform: translate3d(-0.5px, 0.3px, 0);
+  }
+  45% {
+    filter: brightness(0.95) contrast(0.98);
+    opacity: 0.98;
+    transform: translate3d(0.4px, -0.3px, 0);
+  }
+  70% {
+    filter: brightness(1.04) contrast(1.02) drop-shadow(-0.5px 0 0 rgba(0, 255, 120, 0.15));
+    opacity: 0.97;
+    transform: translate3d(-0.2px, 0.2px, 0);
+  }
+  100% {
+    filter: brightness(1) contrast(1);
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 /* Boot Sequence Keyframe Animations */
 .boot-line-expand {
   animation: bootLine 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -315,23 +374,38 @@ button {
 }
 
 /* Responsive Mobile Polish */
+@media (max-width: 1200px) {
+  .antenna-graphic-container {
+    opacity: 0.15 !important;
+  }
+}
+
 @media (max-width: 768px) {
   .crt-television-frame {
     padding: 0 6px;
   }
   
   .crt-tv-frame-overlay-container {
-    opacity: 0.4;
+    opacity: 1;
   }
 
   .antenna-graphic-container {
     position: relative !important;
-    right: auto !important;
     top: auto !important;
+    right: auto !important;
+    left: auto !important;
     bottom: auto !important;
-    margin-top: 2rem;
-    justify-content: flex-start !important;
-    opacity: 0.5 !important;
+    transform: none !important;
+    margin: 2.5rem auto 0 auto !important;
+    justify-content: center !important;
+    opacity: 0.4 !important;
+    height: 180px !important;
+    width: 100% !important;
+  }
+
+  .antenna-graphic-container img {
+    height: 180px !important;
+    max-height: 180px !important;
   }
 
   h1, h2, h3 {
@@ -356,6 +430,7 @@ button {
 
 /* Media Query Adjustments */
 @media (prefers-reduced-motion: reduce) {
+  .crt-experimental-flicker-active,
   .crt-interference-glitch,
   .shutdown-collapsing,
   .boot-line-expand {

@@ -102,13 +102,13 @@ export default function HeroSection({ onExploreClick }) {
         </div>
       </div>
 
-      {/* Main Name Typography */}
+      {/* Main Name Typography - Adaptable across all aspect ratios */}
       <div
         style={{
           position: 'relative',
           zIndex: 10,
           marginTop: 'auto',
-          marginBottom: 'clamp(-1.8rem, -3vw, -2.8rem)',
+          marginBottom: '0',
           marginLeft: '-0.2rem',
           maxWidth: '100%',
         }}
@@ -116,9 +116,9 @@ export default function HeroSection({ onExploreClick }) {
         <h1
           className="font-display"
           style={{
-            fontSize: 'clamp(2.5rem, 11vw, 9rem)',
+            fontSize: 'clamp(2.2rem, min(9.5vw, 12.5vh), var(--font-size-h1, 6.854rem))',
             fontWeight: 800,
-            lineHeight: 0.86,
+            lineHeight: 0.88,
             letterSpacing: '-0.04em',
             margin: 0,
             textTransform: 'uppercase',
@@ -135,7 +135,7 @@ export default function HeroSection({ onExploreClick }) {
         </h1>
       </div>
 
-      {/* Footer */}
+      {/* Footer / Call To Action Above The Fold */}
       <div
         style={{
           position: 'relative',
@@ -144,34 +144,39 @@ export default function HeroSection({ onExploreClick }) {
           justifyContent: 'flex-end',
           alignItems: 'center',
           borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          paddingTop: '0.8rem',
-          marginTop: '2.5rem',
+          paddingTop: 'var(--space-sm, 0.618rem)',
+          marginTop: 'var(--space-lg, 1.618rem)',
         }}
       >
         <button
           onClick={onExploreClick}
+          aria-label="Explore work section"
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            fontSize: 'var(--font-size-sm, 13px)',
             color: 'var(--color-phosphor-white)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
-            padding: '10px 18px',
+            backgroundColor: 'rgba(12, 14, 18, 0.6)',
+            padding: '10px 20px',
             letterSpacing: '0.1em',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            transition: 'all 0.2s',
+            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            cursor: 'pointer',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = 'var(--color-warning-red)';
-            e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 42, 42, 0.3)';
+            e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 42, 42, 0.35)';
+            e.currentTarget.style.color = 'var(--color-warning-red)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
             e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.color = 'var(--color-phosphor-white)';
           }}
         >
-          WORK ↓
+          EXPLORE WORK ↓
         </button>
       </div>
     </section>

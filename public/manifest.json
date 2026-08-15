@@ -1,0 +1,17 @@
+{
+  "name": "Rewati Raman Singh — Portfolio",
+  "short_name": "Rewati Portfolio",
+  "description": "Rewati Raman Singh's personal retro CRT transmission portfolio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080a",
+  "theme_color": "#0c0e12",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

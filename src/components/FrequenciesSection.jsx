@@ -36,14 +36,14 @@ export default function FrequenciesSection() {
       }}
     >
       {/* Section Header */}
-      <div style={{ marginBottom: '4rem' }}>
+      <div style={{ marginBottom: 'var(--space-xl, 2.618rem)' }}>
         <div
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            fontSize: 'var(--font-size-xs, 12px)',
             color: 'var(--color-warning-red)',
             letterSpacing: '0.1em',
-            marginBottom: '0.5rem',
+            marginBottom: 'var(--space-xs, 0.382rem)',
           }}
         >
           FREQUENCIES
@@ -51,7 +51,7 @@ export default function FrequenciesSection() {
         <h2
           className="font-display text-phosphor"
           style={{
-            fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+            fontSize: 'var(--font-size-h2, clamp(2.2rem, 4.236vw, 4.236rem))',
             fontWeight: 800,
             textTransform: 'uppercase',
             margin: 0,
@@ -65,8 +65,8 @@ export default function FrequenciesSection() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '2rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 'var(--space-lg, 1.618rem)',
         }}
       >
         {topics.map((topic) => (
@@ -75,7 +75,7 @@ export default function FrequenciesSection() {
             style={{
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backgroundColor: 'rgba(255, 255, 255, 0.015)',
-              padding: '1.8rem',
+              padding: 'var(--space-lg, 1.618rem)',
               transition: 'transform 0.2s, border-color 0.2s',
             }}
             onMouseEnter={(e) => {
@@ -88,9 +88,12 @@ export default function FrequenciesSection() {
             <h3
               className="font-display text-phosphor"
               style={{
-                fontSize: '1.8rem',
+                fontSize: 'clamp(1.4rem, 2.4vw, 2.2rem)',
                 fontWeight: 800,
-                marginBottom: '0.8rem',
+                marginBottom: 'var(--space-xs, 0.382rem)',
+                lineHeight: 1.05,
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
               }}
             >
               {topic.title}
@@ -98,9 +101,9 @@ export default function FrequenciesSection() {
             <p
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '13px',
+                fontSize: 'var(--font-size-base, 14px)',
                 color: 'var(--color-signal-grey)',
-                lineHeight: 1.65,
+                lineHeight: 1.618,
               }}
             >
               {topic.text}

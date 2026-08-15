@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function CRTCanvas({ interferenceLevel = 0 }) {
+export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -8,6 +8,7 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
+    let isTabVisible = !document.hidden;
 
     // Canvas size setup
     const resizeCanvas = () => {
@@ -17,6 +18,16 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas, { passive: true });
 
+    // Handle Page Visibility API (Pause completely when tab is backgrounded)
+    const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible) {
+        lastFrameTime = performance.now();
+        render();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     // Physics State
     const mouse = {
       x: window.innerWidth * 0.5,
@@ -25,6 +36,7 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
       targetY: window.innerHeight * 0.5,
       active: false,
       velocity: 0,
+      lastMoved: performance.now(),
     };
 
     // Glass Reflection Physics State
@@ -43,6 +55,7 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
         mouse.targetX = e.clientX - rect.left;
         mouse.targetY = e.clientY - rect.top;
         mouse.active = true;
+        mouse.lastMoved = performance.now();
       }
     };
 
@@ -54,98 +67,126 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
     window.addEventListener('pointerleave', handlePointerLeave, { passive: true });
 
     let frame = 0;
+    let lastFrameTime = performance.now();
 
-    // Render loop
+    // Render loop with idle throttling
     const render = () => {
-      frame++;
-      const width = canvas.width;
-      const height = canvas.height;
+      if (!isTabVisible) return;
 
-      ctx.clearRect(0, 0, width, height);
+      const now = performance.now();
+      const timeSinceMouseMoved = now - mouse.lastMoved;
+      const isIdle = timeSinceMouseMoved > 2500 && interferenceLevel === 0 && !isFlickering && !mouse.active;
 
-      // Smooth Physics Interpolation
-      const dx = mouse.targetX - mouse.x;
-      const dy = mouse.targetY - mouse.y;
-      mouse.x += dx * 0.5;
-      mouse.y += dy * 0.5;
-      mouse.velocity = mouse.velocity * 0.8 + Math.sqrt(dx * dx + dy * dy) * 0.2;
+      // Frame rate throttling: If idle, render at ~20fps (every 50ms) instead of 60fps
+      const minInterval = isIdle ? 50 : 16;
+      const elapsed = now - lastFrameTime;
 
-      // 1. Environmental Glass Reflection Physics (Slow Moving Specular Gradient)
-      reflection.x += reflection.vx + (mouse.x - width * 0.5) * 0.0002;
-      reflection.y += reflection.vy + (mouse.y - height * 0.5) * 0.0002;
+      if (elapsed >= minInterval) {
+        lastFrameTime = now - (elapsed % minInterval);
+        frame++;
+        const width = canvas.width;
+        const height = canvas.height;
 
-      if (reflection.x < 0 || reflection.x > width) reflection.vx *= -1;
-      if (reflection.y < 0 || reflection.y > height) reflection.vy *= -1;
+        ctx.clearRect(0, 0, width, height);
 
-      const grad = ctx.createRadialGradient(
-        reflection.x, reflection.y, 50,
-        reflection.x, reflection.y, Math.max(width, height) * 0.6
-      );
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.025)');
-      grad.addColorStop(0.5, 'rgba(180, 200, 220, 0.008)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        // Smooth Physics Interpolation
+        const dx = mouse.targetX - mouse.x;
+        const dy = mouse.targetY - mouse.y;
+        mouse.x += dx * 0.5;
+        mouse.y += dy * 0.5;
+        mouse.velocity = mouse.velocity * 0.8 + Math.sqrt(dx * dx + dy * dy) * 0.2;
 
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
+        // 1. Environmental Glass Reflection Physics (Slow Moving Specular Gradient)
+        reflection.x += reflection.vx + (mouse.x - width * 0.5) * 0.0002;
+        reflection.y += reflection.vy + (mouse.y - height * 0.5) * 0.0002;
 
-      // 2. Magnetic Pointer Field (Desktop only - soft hazy phosphor glow)
-      if (!isTouch && mouse.active) {
-        const radius = Math.min(120, 70 + mouse.velocity * 0.4);
+        if (reflection.x < 0 || reflection.x > width) reflection.vx *= -1;
+        if (reflection.y < 0 || reflection.y > height) reflection.vy *= -1;
 
-        ctx.save();
-
-        // Hazy Soft Phosphor Light Core
-        const coreGrad = ctx.createRadialGradient(
-          mouse.x, mouse.y, 0,
-          mouse.x, mouse.y, 28
+        const grad = ctx.createRadialGradient(
+          reflection.x, reflection.y, 50,
+          reflection.x, reflection.y, Math.max(width, height) * 0.6
         );
-        coreGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
-        coreGrad.addColorStop(0.4, 'rgba(227, 230, 225, 0.1)');
-        coreGrad.addColorStop(1, 'rgba(227, 230, 225, 0)');
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0.025)');
+        grad.addColorStop(0.5, 'rgba(180, 200, 220, 0.008)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-        ctx.fillStyle = coreGrad;
-        ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, 28, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
 
-        // Outer Phosphor Halo
-        const magGrad = ctx.createRadialGradient(
-          mouse.x, mouse.y, 0,
-          mouse.x, mouse.y, radius
-        );
-        magGrad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
-        magGrad.addColorStop(0.4, 'rgba(255, 42, 42, 0.03)');
-        magGrad.addColorStop(0.75, 'rgba(0, 255, 120, 0.015)');
-        magGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        // 2. Magnetic Pointer Field (Desktop only - soft hazy phosphor glow)
+        if (!isTouch && mouse.active) {
+          const radius = Math.min(120, 70 + mouse.velocity * 0.4);
 
-        ctx.fillStyle = magGrad;
-        ctx.beginPath();
-        ctx.arc(mouse.x, mouse.y, radius, 0, Math.PI * 2);
-        ctx.fill();
+          ctx.save();
 
-        // Motion Arc Lines
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.lineWidth = 1;
-        for (let i = -radius; i <= radius; i += 16) {
-          const arcY = mouse.y + i;
-          if (arcY > 0 && arcY < height) {
-            const dist = Math.abs(i) / radius;
-            const curve = (1 - dist * dist) * 5 * Math.sin(frame * 0.06 + i * 0.08);
-            ctx.beginPath();
-            ctx.moveTo(mouse.x - Math.sqrt(radius * radius - i * i), arcY);
-            ctx.quadraticCurveTo(mouse.x, arcY + curve, mouse.x + Math.sqrt(radius * radius - i * i), arcY);
-            ctx.stroke();
+          // Hazy Soft Phosphor Light Core
+          const coreGrad = ctx.createRadialGradient(
+            mouse.x, mouse.y, 0,
+            mouse.x, mouse.y, 28
+          );
+          coreGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+          coreGrad.addColorStop(0.4, 'rgba(227, 230, 225, 0.1)');
+          coreGrad.addColorStop(1, 'rgba(227, 230, 225, 0)');
+
+          ctx.fillStyle = coreGrad;
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, 28, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Outer Phosphor Halo
+          const magGrad = ctx.createRadialGradient(
+            mouse.x, mouse.y, 0,
+            mouse.x, mouse.y, radius
+          );
+          magGrad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
+          magGrad.addColorStop(0.4, 'rgba(255, 42, 42, 0.03)');
+          magGrad.addColorStop(0.75, 'rgba(0, 255, 120, 0.015)');
+          magGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+          ctx.fillStyle = magGrad;
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Motion Arc Lines
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+          ctx.lineWidth = 1;
+          for (let i = -radius; i <= radius; i += 16) {
+            const arcY = mouse.y + i;
+            if (arcY > 0 && arcY < height) {
+              const dist = Math.abs(i) / radius;
+              const curve = (1 - dist * dist) * 5 * Math.sin(frame * 0.06 + i * 0.08);
+              ctx.beginPath();
+              ctx.moveTo(mouse.x - Math.sqrt(radius * radius - i * i), arcY);
+              ctx.quadraticCurveTo(mouse.x, arcY + curve, mouse.x + Math.sqrt(radius * radius - i * i), arcY);
+              ctx.stroke();
+            }
           }
+          ctx.restore();
         }
-        ctx.restore();
-      }
 
-      // 3. Transient Noise Grain / Glitch Sync Burst
-      if (interferenceLevel > 0 || Math.random() < 0.015) {
-        const glitchHeight = Math.floor(Math.random() * 5) + 2;
-        const glitchY = Math.floor(Math.random() * height);
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.03 + interferenceLevel * 0.1})`;
-        ctx.fillRect(0, glitchY, width, glitchHeight);
+        // 3. Transient Noise Grain / Glitch Sync Burst
+        if (interferenceLevel > 0 || Math.random() < 0.015) {
+          const glitchHeight = Math.floor(Math.random() * 5) + 2;
+          const glitchY = Math.floor(Math.random() * height);
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.03 + interferenceLevel * 0.1})`;
+          ctx.fillRect(0, glitchY, width, glitchHeight);
+        }
+
+        // 4. Experimental Phosphor Beam Sweep Line
+        if (isFlickering) {
+          const sweepY = (frame * 24) % height;
+          const lineGrad = ctx.createLinearGradient(0, sweepY - 10, 0, sweepY + 10);
+          lineGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          lineGrad.addColorStop(0.5, 'rgba(227, 230, 225, 0.06)');
+          lineGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = lineGrad;
+          ctx.fillRect(0, sweepY - 10, width, 20);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+          ctx.fillRect(0, sweepY, width, 1);
+        }
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -157,9 +198,11 @@ export default function CRTCanvas({ interferenceLevel = 0 }) {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerleave', handlePointerLeave);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [interferenceLevel]);
+  }, [interferenceLevel, isFlickering]);
 
   return <canvas ref={canvasRef} className="crt-canvas-layer" />;
 }
+

@@ -68,14 +68,14 @@ export default function WorkSection({ onHoverProject }) {
       }}
     >
       {/* Section Header */}
-      <div className="reveal-on-scroll" style={{ marginBottom: '4rem' }}>
+      <div className="reveal-on-scroll" style={{ marginBottom: 'var(--space-xl, 2.618rem)' }}>
         <div
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            fontSize: 'var(--font-size-xs, 12px)',
             color: 'var(--color-warning-red)',
             letterSpacing: '0.1em',
-            marginBottom: '0.5rem',
+            marginBottom: 'var(--space-xs, 0.382rem)',
           }}
         >
           WORK
@@ -83,10 +83,10 @@ export default function WorkSection({ onHoverProject }) {
         <h2
           className="font-display text-phosphor"
           style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+            fontSize: 'var(--font-size-h2, clamp(2.2rem, 4.236vw, 4.236rem))',
             fontWeight: 800,
             textTransform: 'uppercase',
-            margin: '0 0 1rem 0',
+            margin: '0 0 var(--space-sm, 0.618rem) 0',
           }}
         >
           THINGS I'VE BUILT
@@ -94,7 +94,7 @@ export default function WorkSection({ onHoverProject }) {
         <p
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '14px',
+            fontSize: 'var(--font-size-base, 14px)',
             color: 'var(--color-signal-grey)',
             maxWidth: '620px',
           }}
@@ -104,7 +104,7 @@ export default function WorkSection({ onHoverProject }) {
       </div>
 
       {/* Project Cards List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2xl, 4.236rem)' }}>
         {projects.map((project) => (
           <article
             key={project.id}
@@ -130,9 +130,9 @@ export default function WorkSection({ onHoverProject }) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '12px',
+                fontSize: 'var(--font-size-xs, 12px)',
                 color: 'var(--color-signal-grey)',
-                marginBottom: '1rem',
+                marginBottom: 'var(--space-sm, 0.618rem)',
               }}
             >
               <span>WORK / {project.number}</span>
@@ -142,9 +142,9 @@ export default function WorkSection({ onHoverProject }) {
             <h3
               className="font-display text-phosphor"
               style={{
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontSize: 'var(--font-size-h3, 2.618rem)',
                 fontWeight: 800,
-                marginBottom: '0.8rem',
+                marginBottom: 'var(--space-sm, 0.618rem)',
                 lineHeight: 1.05,
               }}
             >
@@ -155,9 +155,9 @@ export default function WorkSection({ onHoverProject }) {
               <div
                 className="font-display"
                 style={{
-                  fontSize: 'clamp(1.4rem, 3.2vw, 2.2rem)',
+                  fontSize: 'var(--font-size-h4, 1.618rem)',
                   color: 'var(--color-signal-grey)',
-                  marginBottom: '1rem',
+                  marginBottom: 'var(--space-md, 1rem)',
                   lineHeight: 1.1,
                 }}
               >
