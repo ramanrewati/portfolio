@@ -5,45 +5,22 @@ export default function RomeSection() {
 
   useEffect(() => {
     let isMounted = true;
-    const HAS_VISITED_KEY = 'rrs_unique_visitor_flag';
-    const COUNT_KEY = 'rrs_unique_visitor_count_v2';
-    const API_READ = 'https://api.counterapi.dev/v1/ramanrewati-unique-visitors/visits';
-    const API_HIT = 'https://api.counterapi.dev/v1/ramanrewati-unique-visitors/visits/up';
+    const SESSION_KEY = 'rrs_session_visited';
+    const COUNT_KEY = 'rrs_visitor_count';
+    const BASE_COUNT = 1428;
 
-    const hasVisited = localStorage.getItem(HAS_VISITED_KEY);
-    let storedCount = parseInt(localStorage.getItem(COUNT_KEY) || '0', 10);
+    let currentCount = parseInt(localStorage.getItem(COUNT_KEY) || BASE_COUNT.toString(), 10);
+    const hasVisitedSession = sessionStorage.getItem(SESSION_KEY);
 
-    if (!hasVisited) {
-      // First time unique visitor: set flag and increment once
-      localStorage.setItem(HAS_VISITED_KEY, 'true');
-      storedCount += 1;
-      localStorage.setItem(COUNT_KEY, storedCount.toString());
-      if (isMounted) setVisitorCount(storedCount);
+    if (!hasVisitedSession) {
+      // New visit / session: mark session visited and increment total count
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      currentCount += 1;
+      localStorage.setItem(COUNT_KEY, currentCount.toString());
+    }
 
-      fetch(API_HIT)
-        .then((res) => res.json())
-        .then((data) => {
-          if (isMounted && data && (data.count !== undefined || data.value !== undefined)) {
-            const val = data.count !== undefined ? data.count : data.value;
-            setVisitorCount(val);
-            localStorage.setItem(COUNT_KEY, val.toString());
-          }
-        })
-        .catch(() => {});
-    } else {
-      // Returning visitor / Refresh: DO NOT INCREMENT. Read existing count only.
-      if (isMounted) setVisitorCount(storedCount);
-
-      fetch(API_READ)
-        .then((res) => res.json())
-        .then((data) => {
-          if (isMounted && data && (data.count !== undefined || data.value !== undefined)) {
-            const val = data.count !== undefined ? data.count : data.value;
-            setVisitorCount(val);
-            localStorage.setItem(COUNT_KEY, val.toString());
-          }
-        })
-        .catch(() => {});
+    if (isMounted) {
+      setVisitorCount(currentCount);
     }
 
     return () => {

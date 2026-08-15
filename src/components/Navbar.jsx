@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, RefreshCw, Zap } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw } from 'lucide-react';
 import { crtAudio } from '../utils/crtAudio';
 
-export default function Navbar({ onReboot, onTriggerFlicker }) {
+export default function Navbar({ onReboot }) {
   const [isMuted, setIsMuted] = useState(false);
 
   const handleToggleMute = () => {
@@ -25,42 +25,6 @@ export default function Navbar({ onReboot, onTriggerFlicker }) {
     >
       {/* Right Controls */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', pointerEvents: 'auto' }}>
-        {/* Experimental CRT Flicker Button */}
-        {onTriggerFlicker && (
-          <button
-            onClick={onTriggerFlicker}
-            title="Trigger Experimental Flicker (Once)"
-            style={{
-              color: 'var(--color-signal-grey)',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'rgba(12, 14, 18, 0.85)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '4px',
-              backdropFilter: 'blur(8px)',
-              fontSize: '11px',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.08em',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffb703';
-              e.currentTarget.style.borderColor = 'rgba(255, 183, 3, 0.5)';
-              e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 183, 3, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-signal-grey)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <Zap size={13} style={{ color: '#ffb703' }} />
-            <span>FLICKER</span>
-          </button>
-        )}
-
         {/* Audio Toggle */}
         <button
           onClick={handleToggleMute}

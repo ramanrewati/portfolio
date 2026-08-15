@@ -148,7 +148,7 @@ export default function App() {
         <div className="crt-glass-overlay" />
 
         {/* CRT Top Header Navbar */}
-        <Navbar onReboot={handleReboot} onTriggerFlicker={triggerExperimentalFlicker} />
+        <Navbar onReboot={handleReboot} />
 
         {/* Main Content Stream */}
         <main style={{ flex: 1, position: 'relative', zIndex: 10 }}>
