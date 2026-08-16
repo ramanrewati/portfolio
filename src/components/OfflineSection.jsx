@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-const DEFAULT_FALLBACK_TRACK = {
-  song: 'Starboy',
-  artist: 'The Weeknd ft. Daft Punk',
-  album: 'Starboy',
-  albumArt: 'https://i.scdn.co/image/ab67616d0000b2734718e241245109ec73de3f86',
-  trackUrl: 'https://open.spotify.com/track/7lQWRAAUFyW3Veq8eLB3sp',
-};
+import DEFAULT_FALLBACK_TRACK from '../data/lastPlayed.json';
 
 const STORAGE_KEY = 'crt_last_played_spotify_track';
 

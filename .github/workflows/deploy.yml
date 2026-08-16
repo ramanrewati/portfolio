@@ -3,10 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+  schedule:
+    # Runs automatically every 5 minutes to check for updated Spotify activity
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -32,6 +37,21 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Sync Spotify Track from Lanyard
+        run: node scripts/sync-spotify.js
+        env:
+          CI: true
+
+      - name: Commit and push track update if changed
+        run: |
+          if ! git diff --quiet src/data/lastPlayed.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/data/lastPlayed.json
+            git commit -m "sync: update last played spotify track [skip ci]"
+            git push origin main
+          fi
 
       - name: Build project
         run: npm run build

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-spotify": "node scripts/sync-spotify.js"
   },
   "dependencies": {
     "lucide-react": "^1.26.0",
