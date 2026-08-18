@@ -1,6 +1,15 @@
 import React from 'react';
+import { crtAudio } from '../utils/crtAudio';
 
-export default function HeroSection({ onExploreClick }) {
+const NAV_TABS = [
+  { id: 'work', number: '01', label: 'WORK' },
+  { id: 'things', number: '02', label: 'THINGS' },
+  { id: 'about', number: '03', label: 'OFFLINE' },
+  { id: 'frequencies', number: '04', label: 'LAST PLAYED' },
+  { id: 'ping', number: '05', label: 'CONTACT' },
+];
+
+export default function HeroSection({ onNavigate }) {
   return (
     <section
       id="hero"
@@ -55,7 +64,7 @@ export default function HeroSection({ onExploreClick }) {
           left: 0,
           width: '100%',
           height: '180px',
-          background: 'linear-gradient(to bottom, rgba(12, 14, 18, 0) 0%, rgba(12, 14, 18, 0.35) 40%, rgba(12, 14, 18, 0.8) 75%, var(--color-crt-screen, #0c0e12) 100%)',
+          background: 'linear-gradient(to bottom, rgba(12, 14, 18, 0.35) 40%, rgba(12, 14, 18, 0.8) 75%, var(--color-crt-screen, #0c0e12) 100%)',
           backdropFilter: 'blur(6px)',
           WebkitBackdropFilter: 'blur(6px)',
           maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
@@ -108,7 +117,7 @@ export default function HeroSection({ onExploreClick }) {
           position: 'relative',
           zIndex: 10,
           marginTop: 'auto',
-          marginBottom: '0',
+          marginBottom: 0,
           marginLeft: '-0.2rem',
           maxWidth: '100%',
         }}
@@ -135,50 +144,85 @@ export default function HeroSection({ onExploreClick }) {
         </h1>
       </div>
 
-      {/* Footer / Call To Action Above The Fold */}
-      <div
+      {/* Right Centre Vertical Navigation Tabs (Desktop: Right-Center, Mobile: Bottom Action Strip) */}
+      <nav
+        aria-label="Section navigation"
+        className="hero-nav-tabs"
         style={{
-          position: 'relative',
-          zIndex: 10,
+          position: 'absolute',
+          top: '52%',
+          right: 'clamp(1.5rem, 5vw, 4rem)',
+          transform: 'translateY(-50%)',
+          zIndex: 15,
           display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          paddingTop: 'var(--space-sm, 0.618rem)',
-          marginTop: 'var(--space-lg, 1.618rem)',
+          flexDirection: 'column',
+          gap: '6px',
+          width: 'clamp(128px, 12vw, 148px)',
         }}
       >
-        <button
-          onClick={onExploreClick}
-          aria-label="Explore work section"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 'var(--font-size-sm, 13px)',
-            color: 'var(--color-phosphor-white)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            backgroundColor: 'rgba(12, 14, 18, 0.6)',
-            padding: '10px 20px',
-            letterSpacing: '0.1em',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-warning-red)';
-            e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 42, 42, 0.35)';
-            e.currentTarget.style.color = 'var(--color-warning-red)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-            e.currentTarget.style.boxShadow = 'none';
-            e.currentTarget.style.color = 'var(--color-phosphor-white)';
-          }}
-        >
-          EXPLORE WORK ↓
-        </button>
-      </div>
+        {NAV_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => onNavigate?.(tab.id)}
+            onMouseEnter={() => {
+              crtAudio.playSubtleFlickerSound();
+            }}
+            className="hero-tab-button"
+            aria-label={`Navigate to ${tab.label} section`}
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              color: 'var(--color-phosphor-white)',
+              backgroundColor: 'rgba(12, 14, 18, 0.75)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              padding: '7px 11px',
+              letterSpacing: '0.06em',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              borderRadius: '3px',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              width: '100%',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-warning-red)';
+              e.currentTarget.style.backgroundColor = 'rgba(255, 42, 42, 0.12)';
+              e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 42, 42, 0.35)';
+              e.currentTarget.style.transform = 'translateX(-3px)';
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.16)';
+              e.currentTarget.style.backgroundColor = 'rgba(12, 14, 18, 0.75)';
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.transform = 'translateX(0)';
+              e.currentTarget.style.color = 'var(--color-phosphor-white)';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--color-signal-grey)' }}>
+                {tab.number}
+              </span>
+              <span style={{ fontWeight: 600 }}>{tab.label}</span>
+            </div>
+            <span
+              style={{
+                color: 'var(--color-warning-red)',
+                fontSize: '11px',
+                fontWeight: 700,
+              }}
+            >
+              ↓
+            </span>
+          </button>
+        ))}
+      </nav>
     </section>
   );
 }

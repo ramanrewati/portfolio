@@ -152,7 +152,7 @@ export default function App() {
 
         {/* Main Content Stream */}
         <main style={{ flex: 1, position: 'relative', zIndex: 10 }}>
-          <HeroSection onExploreClick={() => handleNavigate('work')} />
+          <HeroSection onNavigate={handleNavigate} />
           <WorkSection />
           <ThingsSection />
           <OfflineSection />

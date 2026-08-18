@@ -230,6 +230,22 @@ button {
   background-size: 3px 100%;
 }
 
+/* Real-time CRT Magnetic Physical Lens Overlay */
+.crt-magnetic-lens {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 882;
+  will-change: transform, opacity, width, height;
+  backdrop-filter: url(#crtMagneticDistortion) brightness(1.08) contrast(1.06);
+  -webkit-backdrop-filter: url(#crtMagneticDistortion) brightness(1.08) contrast(1.06);
+  mask-image: radial-gradient(circle at center, black 45%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 45%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
+  transition: opacity 0.15s ease-out;
+}
+
 /* Magnetic CRT Canvas Overlay */
 .crt-canvas-layer {
   position: fixed;
@@ -412,6 +428,29 @@ button {
     word-break: break-word;
     overflow-wrap: break-word;
   }
+
+  .hero-nav-tabs {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin: 1rem 0 0.5rem 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    z-index: 20 !important;
+  }
+
+  .hero-nav-tabs .hero-tab-button {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    padding: 7px 10px !important;
+    font-size: 11px !important;
+    justify-content: center !important;
+    background-color: rgba(12, 14, 18, 0.85) !important;
+  }
 }
 
 @media (max-width: 520px) {
@@ -423,8 +462,27 @@ button {
     position: relative !important;
     top: auto !important;
     right: auto !important;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .hero-nav-tabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 0.85rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .hero-nav-tabs .hero-tab-button {
+    flex: 1 1 calc(33.33% - 6px) !important;
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+
+  .hero-nav-tabs .hero-tab-button:nth-child(4),
+  .hero-nav-tabs .hero-tab-button:nth-child(5) {
+    flex: 1 1 calc(50% - 6px) !important;
   }
 }
 
