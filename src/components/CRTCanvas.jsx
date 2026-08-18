@@ -1,65 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-// Generates a normalized Lorentz magnetic displacement map (PNG Data URL)
-function createMagneticDisplacementMap() {
-  const size = 128;
-  const offCanvas = document.createElement('canvas');
-  offCanvas.width = size;
-  offCanvas.height = size;
-  const offCtx = offCanvas.getContext('2d');
-  if (!offCtx) return '';
-
-  const imgData = offCtx.createImageData(size, size);
-  const data = imgData.data;
-  const half = size / 2;
-
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const dx = (x - half) / half;
-      const dy = (y - half) / half;
-      const r = Math.hypot(dx, dy);
-      const idx = (y * size + x) * 4;
-
-      if (r >= 1.0) {
-        // Outside circle: Neutral 128, 128 = 0 displacement
-        data[idx] = 128;
-        data[idx + 1] = 128;
-        data[idx + 2] = 128;
-        data[idx + 3] = 255;
-      } else {
-        // Physical Lorentz force deflection curve (smooth bell dropoff)
-        const warp = Math.pow(1 - r * r, 2) * (1 - r);
-        const angle = Math.atan2(dy, dx);
-        const swirlAngle = angle + Math.PI * 0.5 * (1 - r * 0.35);
-
-        const vx = Math.cos(swirlAngle) * 0.75 + Math.cos(angle) * 0.25;
-        const vy = Math.sin(swirlAngle) * 0.75 + Math.sin(angle) * 0.25;
-
-        data[idx] = Math.round(128 + vx * warp * 126);
-        data[idx + 1] = Math.round(128 + vy * warp * 126);
-        data[idx + 2] = 128;
-        data[idx + 3] = 255;
-      }
-    }
-  }
-  offCtx.putImageData(imgData, 0, 0);
-  return offCanvas.toDataURL('image/png');
-}
+import React, { useEffect, useRef } from 'react';
 
 export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false }) {
   const canvasRef = useRef(null);
   const lensRef = useRef(null);
-  const [mapDataUrl, setMapDataUrl] = useState('');
-
-  // Generate displacement map once on mount
-  useEffect(() => {
-    try {
-      const url = createMagneticDisplacementMap();
-      setMapDataUrl(url);
-    } catch {
-      // Fallback handled by SVG feTurbulence
-    }
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -466,7 +409,7 @@ export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false 
 
   return (
     <>
-      {/* SVG Defs for Physical CRT Magnetic Chromatic Lens Distortion */}
+      {/* HTTPS-Safe Procedural SVG Filter for CRT Magnetic Chromatic Lens Distortion */}
       <svg
         style={{
           position: 'fixed',
@@ -488,25 +431,19 @@ export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false 
             height="160%"
             colorInterpolationFilters="sRGB"
           >
-            {mapDataUrl ? (
-              <feImage
-                href={mapDataUrl}
-                result="lensMap"
-                preserveAspectRatio="none"
-              />
-            ) : (
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.04"
-                numOctaves="2"
-                result="lensMap"
-              />
-            )}
+            {/* Pure procedural mathematical turbulence - works 100% on live HTTPS/Cloudflare/GitHub Pages */}
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.032 0.038"
+              numOctaves="2"
+              result="warpNoise"
+              seed="5"
+            />
 
             {/* Red Channel Physical Displacement */}
             <feDisplacementMap
               in="SourceGraphic"
-              in2="lensMap"
+              in2="warpNoise"
               scale="12"
               xChannelSelector="R"
               yChannelSelector="G"
@@ -522,8 +459,8 @@ export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false 
             {/* Green Channel Physical Displacement */}
             <feDisplacementMap
               in="SourceGraphic"
-              in2="lensMap"
-              scale="7"
+              in2="warpNoise"
+              scale="6"
               xChannelSelector="R"
               yChannelSelector="G"
               result="greenDisplaced"
@@ -538,8 +475,8 @@ export default function CRTCanvas({ interferenceLevel = 0, isFlickering = false 
             {/* Blue Channel Physical Displacement */}
             <feDisplacementMap
               in="SourceGraphic"
-              in2="lensMap"
-              scale="-5"
+              in2="warpNoise"
+              scale="-6"
               xChannelSelector="R"
               yChannelSelector="G"
               result="blueDisplaced"
